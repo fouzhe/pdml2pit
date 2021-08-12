@@ -83,9 +83,15 @@ def transform_field(f,root,depth):
 		pass
 	node=etree.Element('Blob')
 	node.set("valueType","hex")
-	node.set("value",f.get("value"))
+	try:
+		node.set("value",f.get("value"))
+	expect:
+		node.set("value", "")
 	node.set("name",get_field_name(f))
-	node.set("size",str(len(f.get("value"))*4))
+	try:
+		node.set("size",str(len(f.get("value"))*4))
+	expect:
+		pass
 	return node
 
 
@@ -102,7 +108,7 @@ def parse_field(field,root,depth=0):
 
 
 tree=etree.parse(open(sys.argv[1]))
-field=tree.xpath('/pdml/packet/proto[@name=\'mq\']')[0]
+field = tree.xpath("/pdml/packet/proto[@name='{0}']".format(sys.argv[2]))[0]  # example:tls
 
 root=etree.Element('DataModel')
 
